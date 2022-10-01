@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "canimation",
+  "version": "1.0.0",
+  "name": "Chat Screen Animation",
+  "description": "A mod adds animations to chat screen.",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/CAnimation/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.mcreater.canimation.client.CAnimationClient"
+    ],
+    "main": [
+      "com.mcreater.canimation.CAnimation"
+    ]
+  },
+  "mixins": [
+    "CAnimation.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.7",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}
