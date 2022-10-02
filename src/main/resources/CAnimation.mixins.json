@@ -6,7 +6,9 @@
   "mixins": [],
   "client": [
     "ChatHudMixin",
-    "InGameHudMixin"
+    "ChatScreenMixin",
+    "CommandSuggesterMixin",
+    "SuggestionWindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

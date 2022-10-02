@@ -4,10 +4,14 @@
   "version": "1.0.0",
   "name": "Chat Screen Animation",
   "description": "A mod adds animations to chat screen.",
-  "authors": [],
-  "contact": {},
+  "authors": ["Jack253-png"],
+  "contact": {
+    "issues": "https://github.com/Jack253-png/CAnimation/issues",
+    "sources": "https://github.com/Jack253-png/CAnimation",
+    "homepage": "https://modrinth.com/mod/canimation"
+  },
   "license": "MIT",
-  "icon": "assets/CAnimation/icon.png",
+  "icon": "assets/canimation/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -24,5 +28,10 @@
     "fabricloader": ">=0.14.7",
     "fabric": "*",
     "minecraft": "1.18.2"
-  }
+  },
+  "jars": [
+    {
+      "file": "assets/canimation/libs/midnightlib-0.3.1.jar"
+    }
+  ]
 }
