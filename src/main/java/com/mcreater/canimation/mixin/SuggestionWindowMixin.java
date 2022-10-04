@@ -1,6 +1,7 @@
 package com.mcreater.canimation.mixin;
 
 import com.mcreater.canimation.client.CAnimationClient;
+import com.mcreater.canimation.config.CommandSuggesterConfig;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
 import net.minecraft.client.gui.DrawableHelper;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-@Mixin(CommandSuggestor.SuggestionWindow.class)
+@Mixin(value = CommandSuggestor.SuggestionWindow.class, priority = 2147483647)
 public abstract class SuggestionWindowMixin {
     @Mutable @Final @Shadow private Rect2i area;
     @Mutable @Final @Shadow private List<Suggestion> suggestions;
@@ -32,7 +33,9 @@ public abstract class SuggestionWindowMixin {
      */
     @Overwrite
     public void render(MatrixStack matrices, int mouseX, int mouseY) {
-        int i = Math.min(this.suggestions.size(), CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_maxSuggestionSize);
+        int d = CAnimationClient.commandSuggesterConfig.suggestion_background;
+
+        int i = Math.min(this.suggestions.size(), CommandSuggesterConfig.DEFAULT_MAX_SUGGESTION_SIZE);
         boolean bl = this.inWindowIndex > 0;
         boolean bl2 = this.suggestions.size() > this.inWindowIndex + i;
         boolean bl3 = bl || bl2;
@@ -42,8 +45,8 @@ public abstract class SuggestionWindowMixin {
         }
 
         if (bl3) {
-            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() - 1, this.area.getX() + this.area.getWidth(), this.area.getY(), CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_color);
-            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() + this.area.getHeight(), this.area.getX() + this.area.getWidth(), this.area.getY() + this.area.getHeight() + 1, CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_color);
+            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() - 1, this.area.getX() + this.area.getWidth(), this.area.getY(), d);
+            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() + this.area.getHeight(), this.area.getX() + this.area.getWidth(), this.area.getY() + this.area.getHeight() + 1, d);
             int k;
             if (bl) {
                 for(k = 0; k < this.area.getWidth(); ++k) {
@@ -66,7 +69,7 @@ public abstract class SuggestionWindowMixin {
 
         for(int l = 0; l < i; ++l) {
             Suggestion suggestion = this.suggestions.get(l + this.inWindowIndex);
-            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() + 12 * l, this.area.getX() + this.area.getWidth(), this.area.getY() + 12 * l + 12, CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_color);
+            DrawableHelper.fill(matrices, this.area.getX(), this.area.getY() + 12 * l, this.area.getX() + this.area.getWidth(), this.area.getY() + 12 * l + 12, d);
             if (mouseX > this.area.getX() && mouseX < this.area.getX() + this.area.getWidth() && mouseY > this.area.getY() + 12 * l && mouseY < this.area.getY() + 12 * l + 12) {
                 if (bl4) {
                     this.select(l + this.inWindowIndex);
@@ -74,14 +77,13 @@ public abstract class SuggestionWindowMixin {
 
                 bl5 = true;
             }
-
-            CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? -256 : -5592406);
+            CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? CAnimationClient.commandSuggesterConfig.suggestion_selected_text_fill : CAnimationClient.commandSuggesterConfig.suggestion_text_fill);
         }
 
         if (bl5) {
             Message message = this.suggestions.get(this.selection).getTooltip();
             if (message != null) {
-                CAnimationClient.Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_owner.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
+                CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_owner.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
             }
         }
 

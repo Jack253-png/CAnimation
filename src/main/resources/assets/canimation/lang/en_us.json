@@ -1,4 +1,8 @@
 {
   "ui.debug": "Minecraft has in develop mode!",
-  "ui.log.base": "[Chat Screen Animation] %s"
+  "ui.log.base": "[Chat Screen Animation] %s",
+  "ui.config.title": "Chat Screen Animation Config",
+  "ui.config.item.1": "Command Suggester Background Color",
+  "ui.config.item.2": "Command Suggester Text Color",
+  "ui.config.item.3": "Command Suggester Selected Text Color"
 }
