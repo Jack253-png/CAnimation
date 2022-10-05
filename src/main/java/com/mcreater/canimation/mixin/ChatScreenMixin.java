@@ -1,5 +1,6 @@
 package com.mcreater.canimation.mixin;
 
+import com.mcreater.canimation.client.CAnimationClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.CommandSuggestor;
@@ -35,7 +36,6 @@ public abstract class ChatScreenMixin extends Screen  {
         }
     }
 
-
     @Inject(at = @At("HEAD"), method = "resize")
     private void resize(MinecraftClient client, int width, int height, CallbackInfo ci) {
         tempY = -1;
@@ -48,6 +48,7 @@ public abstract class ChatScreenMixin extends Screen  {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (tempY == -1) tempY = height + 1;
         if (tempY > height - 12) tempY -= 1;
+        if (!CAnimationClient.animationConfig.enable_chatScreen_animation) tempY = height - 12;
         chatField.y = (int) tempY;
 
         this.setFocused(this.chatField);

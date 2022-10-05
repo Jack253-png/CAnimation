@@ -2,7 +2,11 @@
   "ui.debug": "Minecraft has in develop mode!",
   "ui.log.base": "[Chat Screen Animation] %s",
   "ui.config.title": "Chat Screen Animation Config",
-  "ui.config.item.1": "Command Suggester Background Color",
-  "ui.config.item.2": "Command Suggester Text Color",
-  "ui.config.item.3": "Command Suggester Selected Text Color"
+  "ui.config.cs.title": "Command Suggester Config",
+  "ui.config.cs.item.1": "Command Suggester Background Color",
+  "ui.config.cs.item.2": "Command Suggester Text Color",
+  "ui.config.cs.item.3": "Command Suggester Selected Text Color",
+  "ui.config.am.title": "Animation Config",
+  "ui.config.am.item.1": "Enable Chat HUD Animation",
+  "ui.config.am.item.2": "Enable Chat Screen Animation"
 }

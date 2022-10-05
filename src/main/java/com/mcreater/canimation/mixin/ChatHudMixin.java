@@ -2,6 +2,7 @@ package com.mcreater.canimation.mixin;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
+import com.mcreater.canimation.client.CAnimationClient;
 import com.mcreater.canimation.utils.FormatUtils;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -101,8 +102,12 @@ public abstract class ChatHudMixin extends DrawableHelper {
                             ++l;
                             if (colorArg1 > 3) {
                                 if (!loadedMap.containsKey(chatHudLine.getText())) {
-                                    loadedMap.put(chatHudLine.getText(), 0D);
-//                                    loadedMap.put(chatHudLine.getText(), (double) (frictions.length - 1));
+                                    if (CAnimationClient.animationConfig.enable_chatHUD_animation) {
+                                        loadedMap.put(chatHudLine.getText(), 0D);
+                                    }
+                                    else {
+                                        loadedMap.put(chatHudLine.getText(), (double) (frictions.length - 1));
+                                    }
                                 }
 
                                 int Ind = loadedMap.get(chatHudLine.getText()).intValue();

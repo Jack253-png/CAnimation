@@ -1,16 +1,13 @@
 package com.mcreater.canimation.config;
 
-import com.mcreater.canimation.utils.ColorCompiler;
 import com.mcreater.canimation.utils.FileHelper;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 
 public class CommandSuggesterConfig extends AbstractConfig {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(CommandSuggesterConfig.class);
     public int suggestion_background = DEFAULT_SUGGESTION_BACKGROUND;
     public int suggestion_text_fill = DEFAULT_SUGGESTION_TEXT_FILL;
     public int suggestion_selected_text_fill = DEFAULT_SUGGESTION_SELECTED_TEXT_FILL;
@@ -20,7 +17,7 @@ public class CommandSuggesterConfig extends AbstractConfig {
     public static final int DEFAULT_SUGGESTION_TEXT_FILL = -5592406;
     public static final int DEFAULT_SUGGESTION_SELECTED_TEXT_FILL = -256;
     public CommandSuggesterConfig(){
-        super(new File(FabricLoaderImpl.INSTANCE.getConfigDir().toFile().getAbsolutePath(), "canimation/canimation-command-suggester.json").getAbsolutePath());
+        super(FileHelper.getConfigPath("canimation/canimation-command-suggester.json"));
         readConfig();
         checkConfig();
     }
@@ -41,15 +38,14 @@ public class CommandSuggesterConfig extends AbstractConfig {
         catch (Exception e){
             logger.error("failed to apply config!", e);
         }
-
     }
 
     public void readConfig() {
         try {
-            CommandSuggesterConfigModel commandSuggesterConfig = AbstractConfig.GSON.fromJson(FileHelper.read(getConfigFile()), CommandSuggesterConfigModel.class);
-            suggestion_background = commandSuggesterConfig.suggestion_background;
-            suggestion_text_fill = commandSuggesterConfig.suggestion_text_fill;
-            suggestion_selected_text_fill = commandSuggesterConfig.suggestion_selected_text_fill;
+            CommandSuggesterConfigModel model = AbstractConfig.GSON.fromJson(FileHelper.read(getConfigFile()), CommandSuggesterConfigModel.class);
+            suggestion_background = model.suggestion_background;
+            suggestion_text_fill = model.suggestion_text_fill;
+            suggestion_selected_text_fill = model.suggestion_selected_text_fill;
         }
         catch (Exception e){
             logger.error("failed to read config!", e);

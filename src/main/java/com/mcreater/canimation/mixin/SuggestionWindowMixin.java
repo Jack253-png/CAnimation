@@ -4,6 +4,7 @@ import com.mcreater.canimation.client.CAnimationClient;
 import com.mcreater.canimation.config.CommandSuggesterConfig;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.CommandSuggestor;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,7 +30,7 @@ public abstract class SuggestionWindowMixin {
 
     /**
      * @author Jack253-png
-     * @reason text color control
+     * @reason Text color control
      */
     @Overwrite
     public void render(MatrixStack matrices, int mouseX, int mouseY) {
@@ -77,7 +78,7 @@ public abstract class SuggestionWindowMixin {
 
                 bl5 = true;
             }
-            CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? CAnimationClient.commandSuggesterConfig.suggestion_selected_text_fill : CAnimationClient.commandSuggesterConfig.suggestion_text_fill);
+            MinecraftClient.getInstance().textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? CAnimationClient.commandSuggesterConfig.suggestion_selected_text_fill : CAnimationClient.commandSuggesterConfig.suggestion_text_fill);
         }
 
         if (bl5) {

@@ -2,7 +2,11 @@
   "ui.debug": "Minecraft 处于开发环境中!",
   "ui.log.base": "[Chat Screen Animation] %s",
   "ui.config.title": "Chat Screen Animation 设置",
-  "ui.config.item.1": "命令提示背景颜色",
-  "ui.config.item.2": "命令提示文本颜色",
-  "ui.config.item.3": "命令提示选中文本颜色"
+  "ui.config.cs.title": "命令提示设置",
+  "ui.config.cs.item.1": "命令提示背景颜色",
+  "ui.config.cs.item.2": "命令提示文本颜色",
+  "ui.config.cs.item.3": "命令提示选中文本颜色",
+  "ui.config.am.title": "动画设置",
+  "ui.config.am.item.1": "启用聊天抬头显示动画",
+  "ui.config.am.item.2": "启用聊天屏幕动画"
 }

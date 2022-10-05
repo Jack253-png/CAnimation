@@ -19,12 +19,6 @@ public abstract class CommandSuggesterMixin {
     @Shadow @Final @Mutable int color;
     @Inject(at = @At("RETURN"), method = "<init>")
     private void init(MinecraftClient client, Screen owner, TextFieldWidget textField, TextRenderer textRenderer, boolean slashOptional, boolean suggestingWhenEmpty, int inWindowIndexOffset, int maxSuggestionSize, boolean chatScreenSized, int color, CallbackInfo ci){
-        CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_textRenderer = textRenderer;
         CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_owner = owner;
-    }
-
-    @Inject(at = @At("HEAD"), method = "showSuggestions")
-    private void showSuggestions(boolean narrateFirstSuggestion, CallbackInfo ci) {
-        color = 16777215 + (1 << 24);
     }
 }
