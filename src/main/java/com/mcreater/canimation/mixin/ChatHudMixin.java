@@ -3,6 +3,7 @@ package com.mcreater.canimation.mixin;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.mcreater.canimation.client.CAnimationClient;
+import com.mcreater.canimation.utils.ChatLogUtils;
 import com.mcreater.canimation.utils.FormatUtils;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -30,21 +31,24 @@ import java.util.Objects;
 @Mixin(value = ChatHud.class, priority = 2147483647)
 public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow private int scrolledLines;
-    @Final @Shadow private final List<ChatHudLine<OrderedText>> visibleMessages = Lists.newArrayList();
-    @Final @Shadow private final Deque<Text> messageQueue = Queues.newArrayDeque();
+    @Final @Shadow private List<ChatHudLine<OrderedText>> visibleMessages;
+    @Final @Shadow private Deque<Text> messageQueue;
     @Shadow private boolean hasUnreadNewMessages;
 
-    @Final @Shadow private final List<ChatHudLine<Text>> messages = Lists.newArrayList();
-    final double[] frictions = FrictionsGenerator.generate(1000);
+    @Final @Shadow private List<ChatHudLine<Text>> messages;
+
+    final double[] frictions = FrictionsGenerator.generate1(1000);
+//    final double[] frictions = FrictionsGenerator.generate2();
     final Map<OrderedText, Double> loadedMap = new HashMap<>();
-    private boolean debugMessageShowed = false;
+
+
+
 
     @Shadow protected abstract boolean isChatHidden();
     @Shadow protected abstract void processMessageQueue();
     @Shadow public abstract int getVisibleLineCount();
     @Shadow protected abstract boolean isChatFocused();
     @Shadow public abstract double getChatScale();
-
     @Shadow public abstract int getWidth();
 
     private static double getMessageOpacityMultiplier(int age) {
@@ -62,11 +66,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
      */
     @Overwrite
     public void render(MatrixStack matrices, int tickDelta) {
-        if (!debugMessageShowed) {
-            Text t = FormatUtils.format("ui.debug");
-            if (FabricLoaderImpl.INSTANCE.isDevelopmentEnvironment()) MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(t);
-            debugMessageShowed = true;
-        }
+        ChatLogUtils.printDebugLog();
         if (!this.isChatHidden()) {
             this.processMessageQueue();
             int i = this.getVisibleLineCount();

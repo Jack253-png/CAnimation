@@ -1,5 +1,6 @@
 package com.mcreater.canimation.utils;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Language;

@@ -1,13 +1,13 @@
 package com.mcreater.canimation.config;
 
+import com.mcreater.canimation.utils.ChatLogUtils;
 import com.mcreater.canimation.utils.FileHelper;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class CommandSuggesterConfig extends AbstractConfig {
-    private static final Logger logger = LogManager.getLogger(CommandSuggesterConfig.class);
+public final class CommandSuggesterConfig extends AbstractConfig {
+    private static final Logger logger = ChatLogUtils.getLogger();
     public int suggestion_background = DEFAULT_SUGGESTION_BACKGROUND;
     public int suggestion_text_fill = DEFAULT_SUGGESTION_TEXT_FILL;
     public int suggestion_selected_text_fill = DEFAULT_SUGGESTION_SELECTED_TEXT_FILL;

@@ -9,14 +9,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.TranslatableText;
 
 public final class ClothConfigScreenFactory {
-    private static void saveConfig(){
-
-    }
     static Screen genConfig(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(new TranslatableText("ui.config.title"))
-                .setSavingRunnable(ClothConfigScreenFactory::saveConfig);
+                .setSavingRunnable(() -> {});
         builder.setTransparentBackground(true);
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 

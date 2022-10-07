@@ -1,14 +1,14 @@
 package com.mcreater.canimation.config;
 
+import com.mcreater.canimation.utils.ChatLogUtils;
 import com.mcreater.canimation.utils.FileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class AnimationConfig extends AbstractConfig {
-    private static final Logger logger = LogManager.getLogger(AnimationConfig.class);
-
+public final class AnimationConfig extends AbstractConfig {
+    private static final Logger logger = ChatLogUtils.getLogger();
     public boolean enable_chatHUD_animation = DEFAULT_chatHUD_animation;
     public boolean enable_chatScreen_animation = DEFAULT_chatScreen_animation;
 
