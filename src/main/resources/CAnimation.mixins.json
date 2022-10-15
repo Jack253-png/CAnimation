@@ -9,6 +9,7 @@
     "ChatScreenMixin",
     "CommandSuggesterMixin",
     "CommandSuggesterMixin$SuggestionWindowMixin",
+    "SubtitlesHudMixin",
     "TitleScreenMixin"
   ],
   "injectors": {

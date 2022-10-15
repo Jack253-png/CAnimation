@@ -2,6 +2,7 @@ package com.mcreater.canimation.utils;
 
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

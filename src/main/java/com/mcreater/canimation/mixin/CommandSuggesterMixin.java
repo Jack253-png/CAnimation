@@ -27,7 +27,6 @@ import java.util.List;
 
 @Mixin(value = CommandSuggestor.class, priority = 2147483647)
 public abstract class CommandSuggesterMixin {
-    @Shadow @Final @Mutable int color;
     @Shadow @Final Screen owner;
     @Inject(at = @At("RETURN"), method = "<init>")
     private void init(MinecraftClient client, Screen owner, TextFieldWidget textField, TextRenderer textRenderer, boolean slashOptional, boolean suggestingWhenEmpty, int inWindowIndexOffset, int maxSuggestionSize, boolean chatScreenSized, int color, CallbackInfo ci){

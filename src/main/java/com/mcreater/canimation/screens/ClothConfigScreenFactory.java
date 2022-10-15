@@ -8,6 +8,8 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.TranslatableText;
 
+import java.util.function.Consumer;
+
 public final class ClothConfigScreenFactory {
     static Screen genConfig(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
@@ -40,6 +42,18 @@ public final class ClothConfigScreenFactory {
                             CAnimationClient.animationConfig.writeConfig();
                         })
                         .setDefaultValue(AnimationConfig.DEFAULT_chatScreen_animation)
+                        .build()
+                )
+                .addEntry(entryBuilder
+                        .startBooleanToggle(
+                                new TranslatableText("ui.config.am.item.3"),
+                                CAnimationClient.animationConfig.enable_subtitle_animation
+                        )
+                        .setSaveConsumer(aBoolean -> {
+                            CAnimationClient.animationConfig.enable_subtitle_animation = aBoolean;
+                            CAnimationClient.animationConfig.writeConfig();
+                        })
+                        .setDefaultValue(AnimationConfig.DEFAULT_subtitle_animation)
                         .build()
                 );
         builder.getOrCreateCategory(new TranslatableText("ui.config.cs.title"))

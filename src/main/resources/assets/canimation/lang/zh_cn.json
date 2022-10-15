@@ -8,5 +8,6 @@
   "ui.config.cs.item.3": "命令提示选中文本颜色",
   "ui.config.am.title": "动画设置",
   "ui.config.am.item.1": "启用聊天抬头显示动画",
-  "ui.config.am.item.2": "启用聊天屏幕动画"
+  "ui.config.am.item.2": "启用聊天屏幕动画",
+  "ui.config.am.item.3": "启用字幕动画"
 }

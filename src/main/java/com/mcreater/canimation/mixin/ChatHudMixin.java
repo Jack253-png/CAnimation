@@ -1,13 +1,9 @@
 package com.mcreater.canimation.mixin;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
 import com.mcreater.canimation.client.CAnimationClient;
 import com.mcreater.canimation.utils.ChatLogUtils;
-import com.mcreater.canimation.utils.FormatUtils;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -37,12 +33,8 @@ public abstract class ChatHudMixin extends DrawableHelper {
 
     @Final @Shadow private List<ChatHudLine<Text>> messages;
 
-    final double[] frictions = FrictionsGenerator.generate1(1000);
-//    final double[] frictions = FrictionsGenerator.generate2();
-    final Map<OrderedText, Double> loadedMap = new HashMap<>();
-
-
-
+    private static final double[] frictions = FrictionsGenerator.generate1(1000);
+    private static final Map<OrderedText, Double> loadedMap = new HashMap<>();
 
     @Shadow protected abstract boolean isChatHidden();
     @Shadow protected abstract void processMessageQueue();
@@ -101,13 +93,9 @@ public abstract class ChatHudMixin extends DrawableHelper {
                             int tempArg = (int) (255.0 * getMessageOpacityMultiplier(messageLock) * d);
                             ++l;
                             if (colorArg1 > 3) {
+
                                 if (!loadedMap.containsKey(chatHudLine.getText())) {
-                                    if (CAnimationClient.animationConfig.enable_chatHUD_animation) {
-                                        loadedMap.put(chatHudLine.getText(), 0D);
-                                    }
-                                    else {
-                                        loadedMap.put(chatHudLine.getText(), (double) (frictions.length - 1));
-                                    }
+                                    loadedMap.put(chatHudLine.getText(), CAnimationClient.animationConfig.enable_chatHUD_animation ? 0D : (double) (frictions.length - 1));
                                 }
 
                                 int Ind = loadedMap.get(chatHudLine.getText()).intValue();
