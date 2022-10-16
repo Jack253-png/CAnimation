@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = TitleScreen.class, priority = 2147483647)
 public abstract class TitleScreenMixin {
     @Inject(at = @At("HEAD"), method = "render")
-    private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) { 
         ChatLogUtils.debugShowed = false;
     }
 }

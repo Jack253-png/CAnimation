@@ -8,7 +8,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.SubtitlesHud;
 import net.minecraft.client.sound.SoundInstanceListener;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -23,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
 @Mixin(value = SubtitlesHud.class, priority = 2147483647)
 public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundInstanceListener {
@@ -35,7 +33,7 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
     private static final Map<SubtitlesHud.SubtitleEntry, Double> loadedMap = new HashMap<>();
     /**
      * @author Jack253-png
-     * @reason rewrite for animation
+     * @reason overwrite for animation
      */
     @Overwrite
     public void render(MatrixStack matrices) {
@@ -51,8 +49,8 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             Vec3d vec3d = new Vec3d(this.client.player.getX(), this.client.player.getEyeY(), this.client.player.getZ());
-            Vec3d vec3d2 = (new Vec3d(0.0, 0.0, -1.0)).rotateX(-this.client.player.getPitch() * 0.017453292F).rotateY(-this.client.player.getYaw() * 0.017453292F);
-            Vec3d vec3d3 = (new Vec3d(0.0, 1.0, 0.0)).rotateX(-this.client.player.getPitch() * 0.017453292F).rotateY(-this.client.player.getYaw() * 0.017453292F);
+            Vec3d vec3d2 = new Vec3d(0.0, 0.0, -1.0).rotateX(-this.client.player.getPitch() * 0.017453292F).rotateY(-this.client.player.getYaw() * 0.017453292F);
+            Vec3d vec3d3 = new Vec3d(0.0, 1.0, 0.0).rotateX(-this.client.player.getPitch() * 0.017453292F).rotateY(-this.client.player.getYaw() * 0.017453292F);
             Vec3d vec3d4 = vec3d2.crossProduct(vec3d3);
             int i = 0;
             int j = 0;
@@ -60,7 +58,7 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
 
             SubtitlesHud.SubtitleEntry subtitleEntry;
             while(iterator.hasNext()) {
-                subtitleEntry = (SubtitlesHud.SubtitleEntry)iterator.next();
+                subtitleEntry = iterator.next();
                 if (subtitleEntry.getTime() + 3000L <= Util.getMeasuringTimeMs()) {
                     iterator.remove();
                 } else {
@@ -81,38 +79,37 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
                 Objects.requireNonNull(this.client.textRenderer);
                 int m = 9;
                 int n = m / 2;
-                float f = 1.0F;
                 int o = this.client.textRenderer.getWidth(text);
                 int p = MathHelper.floor(MathHelper.clampedLerp(255.0F, 75.0F, (float)(Util.getMeasuringTimeMs() - subtitleEntry.getTime()) / 3000.0F));
                 int q = p << 16 | p << 8 | p;
                 matrices.push();
-                matrices.translate((double)((float)this.client.getWindow().getScaledWidth() - (float) l - 2.0F), (double)((float)(this.client.getWindow().getScaledHeight() - 30) - (float) (i * (m + 1))), 0.0);
+                matrices.translate((float)this.client.getWindow().getScaledWidth() - (float) l - 2.0F, (float)(this.client.getWindow().getScaledHeight() - 30) - (float) (i * (m + 1)), 0.0);
                 matrices.scale(1.0F, 1.0F, 1.0F);
                 fill(matrices, -l - 1, -n - 1, l + 1, n + 1, this.client.options.getTextBackgroundColor(0.8F));
                 RenderSystem.enableBlend();
 
-                double leng = o;
+                double percent = o;
                 if (d > 0.0) {
-                    leng += this.client.textRenderer.getWidth(">");
+                    percent += this.client.textRenderer.getWidth(">");
                 } else if (d < 0.0) {
-                    leng += this.client.textRenderer.getWidth("<");
+                    percent += this.client.textRenderer.getWidth("<");
                 }
 
                 if (!loadedMap.containsKey(subtitleEntry)) {
                     loadedMap.put(subtitleEntry, CAnimationClient.animationConfig.enable_subtitle_animation ? 0D : (double) (frictions.length - 1));
                 }
 
-                double it2 = leng * frictions[loadedMap.get(subtitleEntry).intValue()];
+                double it2 = percent * frictions[loadedMap.get(subtitleEntry).intValue()];
 
                 if (!bl) {
                     if (d > 0.0) {
-                        this.client.textRenderer.draw(matrices, ">", (float)(l - this.client.textRenderer.getWidth(">") + it2), (float)(-n), q + -16777216);
+                        this.client.textRenderer.draw(matrices, ">", (float)(l - this.client.textRenderer.getWidth(">") + it2), (float)(-n), q - 16777216);
                     } else if (d < 0.0) {
-                        this.client.textRenderer.draw(matrices, "<", (float)(-l + it2), (float)(-n), q + -16777216);
+                        this.client.textRenderer.draw(matrices, "<", (float)(-l + it2), (float)(-n), q - 16777216);
                     }
                 }
 
-                this.client.textRenderer.draw(matrices, text, (float)(-o / 2 + it2), (float)(-n), q + -16777216);
+                this.client.textRenderer.draw(matrices, text, (float)(-o / 2 + it2), (float)(-n), q - 16777216);
                 matrices.pop();
 
                 if (loadedMap.get(subtitleEntry) < frictions.length - 1) {

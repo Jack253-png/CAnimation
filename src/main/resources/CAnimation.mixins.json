@@ -9,6 +9,8 @@
     "ChatScreenMixin",
     "CommandSuggesterMixin",
     "CommandSuggesterMixin$SuggestionWindowMixin",
+    "InGameHudMixin",
+    "PlayerListHudMixin",
     "SubtitlesHudMixin",
     "TitleScreenMixin"
   ],

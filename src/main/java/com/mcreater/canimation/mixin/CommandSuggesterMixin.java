@@ -30,7 +30,7 @@ public abstract class CommandSuggesterMixin {
     @Shadow @Final Screen owner;
     @Inject(at = @At("RETURN"), method = "<init>")
     private void init(MinecraftClient client, Screen owner, TextFieldWidget textField, TextRenderer textRenderer, boolean slashOptional, boolean suggestingWhenEmpty, int inWindowIndexOffset, int maxSuggestionSize, boolean chatScreenSized, int color, CallbackInfo ci){
-        CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_owner = owner;
+        SuggestionWindowMixin.owner = owner;
     }
 
     @Mixin(value = CommandSuggestor.SuggestionWindow.class, priority = 2147483647)
@@ -41,6 +41,7 @@ public abstract class CommandSuggesterMixin {
         @Shadow private int selection;
         @Shadow private Vec2f mouse;
         @Shadow public abstract void select(int index);
+        private static Screen owner;
 
         /**
          * @author Jack253-png
@@ -98,7 +99,7 @@ public abstract class CommandSuggesterMixin {
             if (bl5) {
                 Message message = this.suggestions.get(this.selection).getTooltip();
                 if (message != null) {
-                    CAnimationClient.default_Java_net_minecraft_client_gui_screen_ChatScreen_commandSuggestor_owner.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
+                    owner.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
                 }
             }
         }

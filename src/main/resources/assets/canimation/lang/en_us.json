@@ -9,5 +9,8 @@
   "ui.config.am.title": "Animation Config",
   "ui.config.am.item.1": "Enable Chat HUD Animation",
   "ui.config.am.item.2": "Enable Chat Screen Animation",
-  "ui.config.am.item.3": "Enable Subtitle Screen Animation"
+  "ui.config.am.item.3": "Enable Subtitle Screen Animation",
+  "ui.config.am.item.4": "Enable Player List Screen Animation",
+  "ui.config.pl.title": "Player List Config",
+  "ui.config.pl.item.1": "Enable Player List Background"
 }
