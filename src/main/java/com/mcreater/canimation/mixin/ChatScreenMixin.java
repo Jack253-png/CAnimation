@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ChatScreen.class, priority = 2147483647)
-public abstract class ChatScreenMixin extends Screen  {
+public abstract class ChatScreenMixin extends Screen {
     private int tempY = -1;
     @Shadow protected TextFieldWidget chatField;
     @Shadow CommandSuggestor commandSuggestor;
@@ -49,7 +49,7 @@ public abstract class ChatScreenMixin extends Screen  {
         if (tempY == -1) tempY = height + 1;
         if (tempY > height - 12) tempY -= 1;
         if (!CAnimationClient.animationConfig.enable_chatScreen_animation) tempY = height - 12;
-        chatField.y = (int) tempY;
+        chatField.y = tempY;
 
         this.setFocused(this.chatField);
         this.chatField.setTextFieldFocused(true);

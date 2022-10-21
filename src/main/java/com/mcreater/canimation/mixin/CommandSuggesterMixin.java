@@ -5,11 +5,8 @@ import com.mcreater.canimation.config.CommandSuggesterConfig;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.CommandSuggestor;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Rect2i;
 import net.minecraft.text.Texts;
@@ -19,20 +16,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
 @Mixin(value = CommandSuggestor.class, priority = 2147483647)
 public abstract class CommandSuggesterMixin {
-    @Shadow @Final Screen owner;
-    @Inject(at = @At("RETURN"), method = "<init>")
-    private void init(MinecraftClient client, Screen owner, TextFieldWidget textField, TextRenderer textRenderer, boolean slashOptional, boolean suggestingWhenEmpty, int inWindowIndexOffset, int maxSuggestionSize, boolean chatScreenSized, int color, CallbackInfo ci){
-        SuggestionWindowMixin.owner = owner;
-    }
-
     @Mixin(value = CommandSuggestor.SuggestionWindow.class, priority = 2147483647)
     public abstract static class SuggestionWindowMixin {
         @Mutable @Final @Shadow private Rect2i area;
@@ -41,7 +29,6 @@ public abstract class CommandSuggesterMixin {
         @Shadow private int selection;
         @Shadow private Vec2f mouse;
         @Shadow public abstract void select(int index);
-        private static Screen owner;
 
         /**
          * @author Jack253-png
@@ -99,7 +86,9 @@ public abstract class CommandSuggesterMixin {
             if (bl5) {
                 Message message = this.suggestions.get(this.selection).getTooltip();
                 if (message != null) {
-                    owner.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
+                    if (MinecraftClient.getInstance().currentScreen != null) {
+                        MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, Texts.toText(message), mouseX, mouseY);
+                    }
                 }
             }
         }

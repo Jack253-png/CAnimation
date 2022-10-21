@@ -1,7 +1,6 @@
 package com.mcreater.canimation.mixin;
 
 import com.google.common.collect.Ordering;
-import com.mcreater.canimation.CAnimation;
 import com.mcreater.canimation.client.CAnimationClient;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.authlib.GameProfile;
@@ -30,9 +29,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Iterator;
 import java.util.List;

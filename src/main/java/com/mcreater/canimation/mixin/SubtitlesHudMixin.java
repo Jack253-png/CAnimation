@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
 @Mixin(value = SubtitlesHud.class, priority = 2147483647)
 public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundInstanceListener {
@@ -30,7 +30,7 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
     @Shadow private boolean enabled;
 
     private static final double[] frictions = FrictionsGenerator.generate1(1000);
-    private static final Map<SubtitlesHud.SubtitleEntry, Double> loadedMap = new HashMap<>();
+    private static final Map<SubtitlesHud.SubtitleEntry, Double> cachedMap = new WeakHashMap<>();
     /**
      * @author Jack253-png
      * @reason overwrite for animation
@@ -95,11 +95,11 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
                     percent += this.client.textRenderer.getWidth("<");
                 }
 
-                if (!loadedMap.containsKey(subtitleEntry)) {
-                    loadedMap.put(subtitleEntry, CAnimationClient.animationConfig.enable_subtitle_animation ? 0D : (double) (frictions.length - 1));
+                if (!cachedMap.containsKey(subtitleEntry)) {
+                    cachedMap.put(subtitleEntry, CAnimationClient.animationConfig.enable_subtitle_animation ? 0D : (double) (frictions.length - 1));
                 }
 
-                double it2 = percent * frictions[loadedMap.get(subtitleEntry).intValue()];
+                double it2 = percent * frictions[cachedMap.get(subtitleEntry).intValue()];
 
                 if (!bl) {
                     if (d > 0.0) {
@@ -112,8 +112,8 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
                 this.client.textRenderer.draw(matrices, text, (float)(-o / 2 + it2), (float)(-n), q - 16777216);
                 matrices.pop();
 
-                if (loadedMap.get(subtitleEntry) < frictions.length - 1) {
-                    loadedMap.put(subtitleEntry, loadedMap.get(subtitleEntry) + 1);
+                if (cachedMap.get(subtitleEntry) < frictions.length - 1) {
+                    cachedMap.put(subtitleEntry, cachedMap.get(subtitleEntry) + 1);
                 }
             }
 

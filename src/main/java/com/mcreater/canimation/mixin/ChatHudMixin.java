@@ -19,10 +19,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
 @Mixin(value = ChatHud.class, priority = 2147483647)
 public abstract class ChatHudMixin extends DrawableHelper {
@@ -34,7 +34,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
     @Final @Shadow private List<ChatHudLine<Text>> messages;
 
     private static final double[] frictions = FrictionsGenerator.generate1(1000);
-    private static final Map<OrderedText, Double> loadedMap = new HashMap<>();
+    private static final Map<OrderedText, Integer> cachedMap = new WeakHashMap<>();
 
     @Shadow protected abstract boolean isChatHidden();
     @Shadow protected abstract void processMessageQueue();
@@ -94,11 +94,11 @@ public abstract class ChatHudMixin extends DrawableHelper {
                             ++l;
                             if (colorArg1 > 3) {
 
-                                if (!loadedMap.containsKey(chatHudLine.getText())) {
-                                    loadedMap.put(chatHudLine.getText(), CAnimationClient.animationConfig.enable_chatHUD_animation ? 0D : (double) (frictions.length - 1));
+                                if (!cachedMap.containsKey(chatHudLine.getText())) {
+                                    cachedMap.put(chatHudLine.getText(), CAnimationClient.animationConfig.enable_chatHUD_animation ? 0 : frictions.length - 1);
                                 }
 
-                                int Ind = loadedMap.get(chatHudLine.getText()).intValue();
+                                int Ind = cachedMap.get(chatHudLine.getText());
                                 double s = (double) (-messageIndex) * g;
 
                                 int finalColorArg = colorArg2;
@@ -119,7 +119,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
                                     RenderSystem.disableBlend();
                                 };
 
-                                if (MinecraftClient.getInstance().currentScreen == null || loadedMap.get(chatHudLine.getText()).intValue() != frictions.length - 1) {
+                                if (MinecraftClient.getInstance().currentScreen == null || cachedMap.get(chatHudLine.getText()) != frictions.length - 1) {
                                     if (tempArg > 3) {
                                         double baseWidth = this.getWidth();
                                         double temp2 = baseWidth * frictions[Ind];
@@ -145,18 +145,18 @@ public abstract class ChatHudMixin extends DrawableHelper {
                                     r.run();
                                 }
 
-                                if (loadedMap.get(chatHudLine.getText()) < frictions.length - 1) {
-                                    loadedMap.put(chatHudLine.getText(), loadedMap.get(chatHudLine.getText()) + 1);
+                                if (cachedMap.get(chatHudLine.getText()) < frictions.length - 1) {
+                                    cachedMap.put(chatHudLine.getText(), cachedMap.get(chatHudLine.getText()) + 1);
                                 }
 
                                 matrices.pop();
                             }
                             else {
-                                loadedMap.remove(chatHudLine.getText());
+                                cachedMap.remove(chatHudLine.getText());
                             }
                         }
                         else {
-                            loadedMap.remove(chatHudLine.getText());
+                            cachedMap.remove(chatHudLine.getText());
                         }
                     }
                 }

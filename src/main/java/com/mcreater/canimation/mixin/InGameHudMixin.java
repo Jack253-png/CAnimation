@@ -1,6 +1,5 @@
 package com.mcreater.canimation.mixin;
 
-import com.mcreater.canimation.client.CAnimationClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
