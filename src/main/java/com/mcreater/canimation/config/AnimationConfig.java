@@ -13,11 +13,13 @@ public final class AnimationConfig extends AbstractConfig {
     public boolean enable_chatScreen_animation = DEFAULT_chatScreen_animation;
     public boolean enable_subtitle_animation = DEFAULT_subtitle_animation;
     public boolean enable_player_list_animation = DEFAULT_player_list_animation;
+    public boolean enable_boss_bar_animation = DEFAULT_boss_bar_animation;
 
     public static final boolean DEFAULT_chatHUD_animation = true;
     public static final boolean DEFAULT_chatScreen_animation = true;
     public static final boolean DEFAULT_subtitle_animation = true;
     public static final boolean DEFAULT_player_list_animation = true;
+    public static final boolean DEFAULT_boss_bar_animation = true;
 
     public AnimationConfig() {
         super(FileHelper.getConfigPath("canimation/canimation-animation.json"));

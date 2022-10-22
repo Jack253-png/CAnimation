@@ -29,8 +29,6 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "com.terraformersmc:modmenu:3.2.2"
-    modImplementation "dev.architectury:architectury:6.2.46"
-    modImplementation "dev.architectury:architectury-fabric:6.2.46"
 //    implementation("net.minecraft:launchwrapper:1.12")
 
     // Easy config screen setup library
