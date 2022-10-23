@@ -95,7 +95,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
                             if (colorArg1 > 3) {
 
                                 if (!cachedMap.containsKey(chatHudLine.getText())) {
-                                    cachedMap.put(chatHudLine.getText(), CAnimationClient.animationConfig.enable_chatHUD_animation ? 0 : frictions.length - 1);
+                                    cachedMap.put(chatHudLine.getText(), CAnimationClient.config.model.animationControl.chatHUD ? 0 : frictions.length - 1);
                                 }
 
                                 int Ind = cachedMap.get(chatHudLine.getText());

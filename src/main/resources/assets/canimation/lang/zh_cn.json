@@ -11,6 +11,7 @@
   "ui.config.am.item.2": "启用聊天屏幕动画",
   "ui.config.am.item.3": "启用字幕动画",
   "ui.config.am.item.4": "启用玩家列表动画",
+  "ui.config.am.item.5": "启用 Boss 条动画",
   "ui.config.pl.title": "玩家列表设置",
   "ui.config.pl.item.1": "启用玩家列表背景"
 }

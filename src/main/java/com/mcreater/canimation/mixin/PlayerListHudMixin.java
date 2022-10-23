@@ -65,7 +65,7 @@ public abstract class PlayerListHudMixin extends DrawableHelper {
         this.visible = visible;
     }
     private static void fillInternal(MatrixStack matrices, int x1, int y1, int x2, int y2, int color) {
-        if (CAnimationClient.playerListConfig.enable_player_list_background) fill(matrices, x1, y1, x2, y2, color);
+        if (CAnimationClient.config.model.playerList.background) fill(matrices, x1, y1, x2, y2, color);
     }
     /**
      * @author Jack253-png
@@ -73,7 +73,7 @@ public abstract class PlayerListHudMixin extends DrawableHelper {
      */
     @Overwrite
     public void render(MatrixStack matrices, int scaledWindowWidth, Scoreboard scoreboard, @Nullable ScoreboardObjective objective) {
-        int offset = (int) (MinecraftClient.getInstance().getWindow().getHeight() * frictions[CAnimationClient.animationConfig.enable_player_list_animation ? index : frictions.length - 1]);
+        int offset = (int) (MinecraftClient.getInstance().getWindow().getHeight() * frictions[CAnimationClient.config.model.animationControl.playerList ? index : frictions.length - 1]);
 
         ClientPlayNetworkHandler clientPlayNetworkHandler = this.client.player.networkHandler;
         List<PlayerListEntry> list = ENTRY_ORDERING.sortedCopy(clientPlayNetworkHandler.getPlayerList());

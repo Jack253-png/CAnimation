@@ -1,7 +1,7 @@
 package com.mcreater.canimation.mixin;
 
 import com.mcreater.canimation.client.CAnimationClient;
-import com.mcreater.canimation.config.CommandSuggesterConfig;
+import com.mcreater.canimation.config.CommonConfig;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
 import net.minecraft.client.MinecraftClient;
@@ -36,9 +36,9 @@ public abstract class CommandSuggesterMixin {
          */
         @Overwrite
         public void render(MatrixStack matrices, int mouseX, int mouseY) {
-            int d = CAnimationClient.commandSuggesterConfig.suggestion_background;
+            int d = CAnimationClient.config.model.commandSuggester.background;
 
-            int i = Math.min(this.suggestions.size(), CommandSuggesterConfig.DEFAULT_MAX_SUGGESTION_SIZE);
+            int i = Math.min(this.suggestions.size(), CommonConfig.CommandSuggesterConfigModel.DEFAULT_MAX_SUGGESTION_SIZE);
             boolean bl = this.inWindowIndex > 0;
             boolean bl2 = this.suggestions.size() > this.inWindowIndex + i;
             boolean bl3 = bl || bl2;
@@ -80,7 +80,7 @@ public abstract class CommandSuggesterMixin {
 
                     bl5 = true;
                 }
-                MinecraftClient.getInstance().textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? CAnimationClient.commandSuggesterConfig.suggestion_selected_text_fill : CAnimationClient.commandSuggesterConfig.suggestion_text_fill);
+                MinecraftClient.getInstance().textRenderer.drawWithShadow(matrices, suggestion.getText(), (float)(this.area.getX() + 1), (float)(this.area.getY() + 2 + 12 * l), l + this.inWindowIndex == this.selection ? CAnimationClient.config.model.commandSuggester.selectedTextFill : CAnimationClient.config.model.commandSuggester.textFill);
             }
 
             if (bl5) {

@@ -96,7 +96,7 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
                 }
 
                 if (!cachedMap.containsKey(subtitleEntry)) {
-                    cachedMap.put(subtitleEntry, CAnimationClient.animationConfig.enable_subtitle_animation ? 0D : (double) (frictions.length - 1));
+                    cachedMap.put(subtitleEntry, CAnimationClient.config.model.animationControl.subtitle ? 0D : (double) (frictions.length - 1));
                 }
 
                 double it2 = percent * frictions[cachedMap.get(subtitleEntry).intValue()];

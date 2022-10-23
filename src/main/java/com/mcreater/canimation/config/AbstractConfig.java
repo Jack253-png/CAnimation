@@ -3,6 +3,7 @@ package com.mcreater.canimation.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcreater.canimation.utils.FormatUtils;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +13,7 @@ public abstract class AbstractConfig {
     public String PATH;
     public AbstractConfig(String PATH) {
         this.PATH = PATH;
-        FormatUtils.getDir(PATH).mkdirs();
+        FormatUtils.getDir(new File(PATH)).mkdirs();
     }
     public abstract void checkConfig();
     public abstract void writeConfig();

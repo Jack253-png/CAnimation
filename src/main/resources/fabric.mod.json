@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "canimation",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "name": "Chat Screen Animation",
   "description": "A mod adds animations to chat screen.",
   "authors": ["Jack253-png"],
@@ -24,7 +24,7 @@
       "com.mcreater.canimation.CAnimation"
     ],
     "modmenu": [
-      "com.mcreater.canimation.screens.ModMenuSupport"
+      "com.mcreater.canimation.screens.ModMenuApiImpl"
     ]
   },
   "mixins": [

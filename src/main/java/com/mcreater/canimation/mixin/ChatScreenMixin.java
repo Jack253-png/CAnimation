@@ -48,7 +48,7 @@ public abstract class ChatScreenMixin extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (tempY == -1) tempY = height + 1;
         if (tempY > height - 12) tempY -= 1;
-        if (!CAnimationClient.animationConfig.enable_chatScreen_animation) tempY = height - 12;
+        if (!CAnimationClient.config.model.animationControl.chatScreen) tempY = height - 12;
         chatField.y = tempY;
 
         this.setFocused(this.chatField);
