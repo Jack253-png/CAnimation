@@ -1,5 +1,7 @@
 package com.mcreater.canimation.mixin;
 
+import com.mcreater.canimation.client.CAnimationClient;
+import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -14,14 +16,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Mixin(value = ChatHud.class, priority = 2147483647)
 public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow @Final private MinecraftClient client;
-    @Shadow @Final private List<String> messageHistory;
-    @Shadow @Final private List<ChatHudLine> messages;
     @Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
     @Shadow private int scrolledLines;
     @Shadow private boolean hasUnreadNewMessages;
@@ -33,6 +35,8 @@ public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow protected abstract int getLineHeight();
     @Shadow protected abstract int getIndicatorX(ChatHudLine.Visible line);
     @Shadow protected abstract void drawIndicatorIcon(MatrixStack matrices, int x, int y, MessageIndicator.Icon icon);
+    private final double[] frictions = FrictionsGenerator.generate1(1000);
+    private final Map<ChatHudLine.Visible, Integer> cachedMap = new HashMap<>();
     private static double getMessageOpacityMultiplier(int age) {
         double d = (double)age / 200.0;
         d = 1.0 - d;
@@ -70,7 +74,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
                 int t;
                 int u;
                 for(int n = 0; n + this.scrolledLines < this.visibleMessages.size() && n < i; ++n) {
-                    ChatHudLine.Visible visible = (ChatHudLine.Visible)this.visibleMessages.get(n + this.scrolledLines);
+                    ChatHudLine.Visible visible = this.visibleMessages.get(n + this.scrolledLines);
                     if (visible != null) {
                         o = currentTick - visible.addedTime();
                         if (o < 200 || bl) {
@@ -79,29 +83,80 @@ public abstract class ChatHudMixin extends DrawableHelper {
                             r = (int)(255.0 * p * e);
                             ++m;
                             if (q > 3) {
+                                if (!cachedMap.containsKey(visible)) {
+                                    cachedMap.put(visible, CAnimationClient.config.model.animationControl.chatHUD ? 0 : frictions.length - 1);
+                                }
+                                int Ind = cachedMap.get(visible);
+
+                                int offset = (int) (this.getWidth() * frictions[Ind]);
+
                                 t = -n * l;
-                                u = (int)((double)t + h);
-                                matrices.push();
-                                matrices.translate(0.0, 0.0, 50.0);
-                                fill(matrices, -4, t - l, k + 4 + 4, t, r << 24);
-                                MessageIndicator messageIndicator = visible.indicator();
-                                if (messageIndicator != null) {
-                                    int v = messageIndicator.indicatorColor() | q << 24;
-                                    fill(matrices, -4, t - l, -2, t, v);
-                                    if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
-                                        int w = this.getIndicatorX(visible);
-                                        Objects.requireNonNull(this.client.textRenderer);
-                                        int x = u + 9;
-                                        this.drawIndicatorIcon(matrices, w, x, messageIndicator.icon());
+                                u = (int) ((double) t + h);
+
+                                int finalT = t;
+                                int finalR = r;
+                                int finalU = u;
+                                int finalQ = q;
+                                Runnable r2 = () -> {
+                                    int off = 0;
+                                    matrices.push();
+                                    matrices.translate(0.0, 0.0, 50.0);
+                                    fill(matrices, -4 - off, finalT - l, k + 4 + 4 - off, finalT, finalR << 24);
+                                    MessageIndicator messageIndicator = visible.indicator();
+                                    if (messageIndicator != null) {
+                                        int v = messageIndicator.indicatorColor() | finalQ << 24;
+                                        fill(matrices, -4 - off, finalT - l, -2 - off, finalT, v);
+                                        if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
+                                            int w = this.getIndicatorX(visible);
+                                            Objects.requireNonNull(this.client.textRenderer);
+                                            int x = finalU + 9;
+                                            this.drawIndicatorIcon(matrices, w - off, x, messageIndicator.icon());
+                                        }
+                                    }
+
+                                    RenderSystem.enableBlend();
+                                    matrices.translate(0.0, 0.0, 50.0);
+                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), (float) 0 - off, (float) finalU, 16777215 + (finalQ << 24));
+                                    RenderSystem.disableBlend();
+                                    matrices.pop();
+                                };
+
+                                if (MinecraftClient.getInstance().currentScreen == null || cachedMap.get(visible) != frictions.length - 1) {
+                                    matrices.push();
+                                    matrices.translate(0.0, 0.0, 50.0);
+                                    fill(matrices, -4 - offset, t - l, k + 4 + 4 - offset, t, r << 24);
+                                    MessageIndicator messageIndicator = visible.indicator();
+                                    if (messageIndicator != null) {
+                                        int v = messageIndicator.indicatorColor() | q << 24;
+                                        fill(matrices, -4 - offset, t - l, -2 - offset, t, v);
+                                        if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
+                                            int w = this.getIndicatorX(visible);
+                                            Objects.requireNonNull(this.client.textRenderer);
+                                            int x = u + 9;
+                                            this.drawIndicatorIcon(matrices, w - offset, x, messageIndicator.icon());
+                                        }
+                                    }
+
+                                    RenderSystem.enableBlend();
+                                    matrices.translate(0.0, 0.0, 50.0);
+                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), (float) 0 - offset, (float) u, 16777215 + (q << 24));
+                                    RenderSystem.disableBlend();
+                                    matrices.pop();
+
+                                    if (cachedMap.get(visible) < frictions.length - 1) {
+                                        cachedMap.put(visible, cachedMap.get(visible) + 1);
                                     }
                                 }
-
-                                RenderSystem.enableBlend();
-                                matrices.translate(0.0, 0.0, 50.0);
-                                this.client.textRenderer.drawWithShadow(matrices, visible.content(), 0.0F, (float)u, 16777215 + (q << 24));
-                                RenderSystem.disableBlend();
-                                matrices.pop();
+                                else {
+                                    r2.run();
+                                }
                             }
+                            else {
+                                cachedMap.remove(visible);
+                            }
+                        }
+                        else {
+                            cachedMap.remove(visible);
                         }
                     }
                 }
@@ -116,7 +171,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
                     fill(matrices, -2, 0, k + 4, 9, z << 24);
                     RenderSystem.enableBlend();
                     matrices.translate(0.0, 0.0, 50.0);
-                    this.client.textRenderer.drawWithShadow(matrices, Text.translatable("chat.queue", new Object[]{y}), 0.0F, 1.0F, 16777215 + (o << 24));
+                    this.client.textRenderer.drawWithShadow(matrices, Text.translatable("chat.queue", y), 0.0F, 1.0F, 16777215 + (o << 24));
                     matrices.pop();
                     RenderSystem.disableBlend();
                 }
