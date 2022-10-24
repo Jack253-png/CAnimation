@@ -1,7 +1,6 @@
 package com.mcreater.canimation.utils;
 
-import net.minecraft.text.BaseText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Language;
 
 import java.io.File;
@@ -9,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class FormatUtils {
-    public static BaseText format(String resKey) {
-        return new TranslatableText("ui.log.base", Language.getInstance().get(resKey));
+    public static Text format(String resKey) {
+        return Text.translatable("ui.log.base", Language.getInstance().get(resKey));
     }
     public static File getDir(File src1) {
         String src = src1.getAbsolutePath();

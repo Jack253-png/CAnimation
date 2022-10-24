@@ -1,48 +1,38 @@
 package com.mcreater.canimation.mixin;
 
-import com.mcreater.canimation.client.CAnimationClient;
-import com.mcreater.canimation.utils.ChatLogUtils;
-import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
 @Mixin(value = ChatHud.class, priority = 2147483647)
 public abstract class ChatHudMixin extends DrawableHelper {
+    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final private List<String> messageHistory;
+    @Shadow @Final private List<ChatHudLine> messages;
+    @Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
     @Shadow private int scrolledLines;
-    @Final @Shadow private List<ChatHudLine<OrderedText>> visibleMessages;
-    @Final @Shadow private Deque<Text> messageQueue;
     @Shadow private boolean hasUnreadNewMessages;
-
-    @Final @Shadow private List<ChatHudLine<Text>> messages;
-
-    private static final double[] frictions = FrictionsGenerator.generate1(1000);
-    private static final Map<OrderedText, Integer> cachedMap = new WeakHashMap<>();
-
     @Shadow protected abstract boolean isChatHidden();
-    @Shadow protected abstract void processMessageQueue();
     @Shadow public abstract int getVisibleLineCount();
     @Shadow protected abstract boolean isChatFocused();
     @Shadow public abstract double getChatScale();
     @Shadow public abstract int getWidth();
-
+    @Shadow protected abstract int getLineHeight();
+    @Shadow protected abstract int getIndicatorX(ChatHudLine.Visible line);
+    @Shadow protected abstract void drawIndicatorIcon(MatrixStack matrices, int x, int y, MessageIndicator.Icon icon);
     private static double getMessageOpacityMultiplier(int age) {
         double d = (double)age / 200.0;
         d = 1.0 - d;
@@ -51,144 +41,98 @@ public abstract class ChatHudMixin extends DrawableHelper {
         d *= d;
         return d;
     }
-
     /**
      * @author Jack253-png
      * @reason overwrite for animations
      */
     @Overwrite
-    public void render(MatrixStack matrices, int tickDelta) {
-        ChatLogUtils.printDebugLog();
+    public void render(MatrixStack matrices, int currentTick) {
         if (!this.isChatHidden()) {
-            this.processMessageQueue();
             int i = this.getVisibleLineCount();
             int j = this.visibleMessages.size();
             if (j > 0) {
                 boolean bl = this.isChatFocused();
-
-                float f = (float) this.getChatScale();
-                int k = MathHelper.ceil((float) getWidth() / f);
+                float f = (float)this.getChatScale();
+                int k = MathHelper.ceil((float)this.getWidth() / f);
                 matrices.push();
                 matrices.translate(4.0, 8.0, 0.0);
                 matrices.scale(f, f, 1.0F);
-                double d = MinecraftClient.getInstance().options.chatOpacity * 0.8999999761581421 + 0.10000000149011612;
-                double e = MinecraftClient.getInstance().options.textBackgroundOpacity;
-                double g = 9.0 * (MinecraftClient.getInstance().options.chatLineSpacing + 1.0);
-                double h = -8.0 * (MinecraftClient.getInstance().options.chatLineSpacing + 1.0) + 4.0 * MinecraftClient.getInstance().options.chatLineSpacing;
-                int l = 0;
+                double d = this.client.options.getChatOpacity().getValue() * 0.8999999761581421 + 0.10000000149011612;
+                double e = this.client.options.getTextBackgroundOpacity().getValue();
+                double g = this.client.options.getChatLineSpacing().getValue();
+                int l = this.getLineHeight();
+                double h = -8.0 * (g + 1.0) + 4.0 * g;
+                int m = 0;
 
-                int messageIndex;
-                int messageLock;
-                int colorArg1;
-                int colorArg2;
-                for (messageIndex = 0; messageIndex + this.scrolledLines < this.visibleMessages.size() && messageIndex < i; ++messageIndex) {
-                    ChatHudLine<OrderedText> chatHudLine = this.visibleMessages.get(messageIndex + this.scrolledLines);
-                    if (chatHudLine != null) {
-                        messageLock = tickDelta - chatHudLine.getCreationTick();
-                        if (messageLock < 200 || bl) {
-                            double o = bl ? 1.0 : getMessageOpacityMultiplier(messageLock);
-                            colorArg1 = (int) (255.0 * o * d);
-                            colorArg2 = (int) (255.0 * o * e);
-
-                            int tempArg = (int) (255.0 * getMessageOpacityMultiplier(messageLock) * d);
-                            ++l;
-                            if (colorArg1 > 3) {
-
-                                if (!cachedMap.containsKey(chatHudLine.getText())) {
-                                    cachedMap.put(chatHudLine.getText(), CAnimationClient.config.model.animationControl.chatHUD ? 0 : frictions.length - 1);
-                                }
-
-                                int Ind = cachedMap.get(chatHudLine.getText());
-                                double s = (double) (-messageIndex) * g;
-
-                                int finalColorArg = colorArg2;
-                                int finalColorArg1 = colorArg1;
-                                Runnable r = () -> {
-                                    matrices.push();
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    fill(matrices, -4, (int) (s - g), k + 4, (int) s, finalColorArg << 24);
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    RenderSystem.enableBlend();
-                                    MinecraftClient.getInstance().textRenderer.drawWithShadow(
-                                            matrices,
-                                            chatHudLine.getText(),
-                                            0F,
-                                            (float) ((int) (s + h)),
-                                            16777215 + (finalColorArg1 << 24)
-                                    );
-                                    RenderSystem.disableBlend();
-                                };
-
-                                if (MinecraftClient.getInstance().currentScreen == null || cachedMap.get(chatHudLine.getText()) != frictions.length - 1) {
-                                    if (tempArg > 3) {
-                                        double baseWidth = this.getWidth();
-                                        double temp2 = baseWidth * frictions[Ind];
-                                        matrices.push();
-                                        matrices.translate(0.0, 0.0, 50.0);
-                                        fill(matrices, (int) (-4 - temp2), (int) (s - g), (int) (k + 4 - temp2), (int) s, colorArg2 << 24);
-                                        matrices.translate(0.0, 0.0, 50.0);
-                                        RenderSystem.enableBlend();
-                                        MinecraftClient.getInstance().textRenderer.drawWithShadow(
-                                                matrices,
-                                                chatHudLine.getText(),
-                                                (float) (0 - baseWidth * frictions[Ind]),
-                                                (float) ((int) (s + h)),
-                                                16777215 + (colorArg1 << 24)
-                                        );
-                                        RenderSystem.disableBlend();
-                                    }
-                                    else {
-                                        r.run();
+                int o;
+                int q;
+                int r;
+                int t;
+                int u;
+                for(int n = 0; n + this.scrolledLines < this.visibleMessages.size() && n < i; ++n) {
+                    ChatHudLine.Visible visible = (ChatHudLine.Visible)this.visibleMessages.get(n + this.scrolledLines);
+                    if (visible != null) {
+                        o = currentTick - visible.addedTime();
+                        if (o < 200 || bl) {
+                            double p = bl ? 1.0 : getMessageOpacityMultiplier(o);
+                            q = (int)(255.0 * p * d);
+                            r = (int)(255.0 * p * e);
+                            ++m;
+                            if (q > 3) {
+                                t = -n * l;
+                                u = (int)((double)t + h);
+                                matrices.push();
+                                matrices.translate(0.0, 0.0, 50.0);
+                                fill(matrices, -4, t - l, k + 4 + 4, t, r << 24);
+                                MessageIndicator messageIndicator = visible.indicator();
+                                if (messageIndicator != null) {
+                                    int v = messageIndicator.indicatorColor() | q << 24;
+                                    fill(matrices, -4, t - l, -2, t, v);
+                                    if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
+                                        int w = this.getIndicatorX(visible);
+                                        Objects.requireNonNull(this.client.textRenderer);
+                                        int x = u + 9;
+                                        this.drawIndicatorIcon(matrices, w, x, messageIndicator.icon());
                                     }
                                 }
-                                else {
-                                    r.run();
-                                }
 
-                                if (cachedMap.get(chatHudLine.getText()) < frictions.length - 1) {
-                                    cachedMap.put(chatHudLine.getText(), cachedMap.get(chatHudLine.getText()) + 1);
-                                }
-
+                                RenderSystem.enableBlend();
+                                matrices.translate(0.0, 0.0, 50.0);
+                                this.client.textRenderer.drawWithShadow(matrices, visible.content(), 0.0F, (float)u, 16777215 + (q << 24));
+                                RenderSystem.disableBlend();
                                 matrices.pop();
                             }
-                            else {
-                                cachedMap.remove(chatHudLine.getText());
-                            }
-                        }
-                        else {
-                            cachedMap.remove(chatHudLine.getText());
                         }
                     }
                 }
 
-                int t;
-                if (!this.messageQueue.isEmpty()) {
-                    messageIndex = (int) (128.0 * d);
-                    t = (int) (255.0 * e);
+                long y = this.client.getMessageHandler().getUnprocessedMessageCount();
+                int z;
+                if (y > 0L) {
+                    o = (int)(128.0 * d);
+                    z = (int)(255.0 * e);
                     matrices.push();
                     matrices.translate(0.0, 0.0, 50.0);
-                    fill(matrices, -2, 0, k + 4, 9, t << 24);
+                    fill(matrices, -2, 0, k + 4, 9, z << 24);
                     RenderSystem.enableBlend();
                     matrices.translate(0.0, 0.0, 50.0);
-                    MinecraftClient.getInstance().textRenderer.drawWithShadow(matrices, new TranslatableText("chat.queue", this.messageQueue.size()), 0.0F, 1.0F, 16777215 + (messageIndex << 24));
-
+                    this.client.textRenderer.drawWithShadow(matrices, Text.translatable("chat.queue", new Object[]{y}), 0.0F, 1.0F, 16777215 + (o << 24));
                     matrices.pop();
                     RenderSystem.disableBlend();
                 }
 
                 if (bl) {
-                    Objects.requireNonNull(MinecraftClient.getInstance().textRenderer);
-                    int m1 = 9;
-                    t = j * m1;
-                    messageLock = l * m1;
-                    int u = this.scrolledLines * messageLock / j;
-                    int v = messageLock * messageLock / t;
-                    if (t != messageLock) {
-                        colorArg1 = u > 0 ? 170 : 96;
-                        colorArg2 = this.hasUnreadNewMessages ? 13382451 : 3355562;
-                        matrices.translate(-4.0, 0.0, 0.0);
-                        fill(matrices, 0, -u, 2, -u - v, colorArg2 + (colorArg1 << 24));
-                        fill(matrices, 2, -u, 1, -u - v, 13421772 + (colorArg1 << 24));
+                    o = this.getLineHeight();
+                    z = j * o;
+                    int aa = m * o;
+                    q = this.scrolledLines * aa / j;
+                    r = aa * aa / z;
+                    if (z != aa) {
+                        int s = q > 0 ? 170 : 96;
+                        t = this.hasUnreadNewMessages ? 13382451 : 3355562;
+                        u = k + 4;
+                        fill(matrices, u, -q, u + 2, -q - r, t + (s << 24));
+                        fill(matrices, u + 2, -q, u + 1, -q - r, 13421772 + (s << 24));
                     }
                 }
 

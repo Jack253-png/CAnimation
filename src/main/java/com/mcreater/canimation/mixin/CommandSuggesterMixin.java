@@ -6,7 +6,7 @@ import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.CommandSuggestor;
+import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Rect2i;
 import net.minecraft.text.Texts;
@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-@Mixin(value = CommandSuggestor.class, priority = 2147483647)
+@Mixin(value = ChatInputSuggestor.class, priority = 2147483647)
 public abstract class CommandSuggesterMixin {
-    @Mixin(value = CommandSuggestor.SuggestionWindow.class, priority = 2147483647)
+    @Mixin(value = ChatInputSuggestor.SuggestionWindow.class, priority = 2147483647)
     public abstract static class SuggestionWindowMixin {
         @Mutable @Final @Shadow private Rect2i area;
         @Mutable @Final @Shadow private List<Suggestion> suggestions;

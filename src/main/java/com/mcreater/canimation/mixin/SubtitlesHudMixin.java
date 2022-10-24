@@ -37,10 +37,10 @@ public abstract class SubtitlesHudMixin extends DrawableHelper implements SoundI
      */
     @Overwrite
     public void render(MatrixStack matrices) {
-        if (!this.enabled && this.client.options.showSubtitles) {
+        if (!this.enabled && this.client.options.getShowSubtitles().getValue()) {
             this.client.getSoundManager().registerListener(this);
             this.enabled = true;
-        } else if (this.enabled && !this.client.options.showSubtitles) {
+        } else if (this.enabled && !this.client.options.getShowSubtitles().getValue()) {
             this.client.getSoundManager().unregisterListener(this);
             this.enabled = false;
         }

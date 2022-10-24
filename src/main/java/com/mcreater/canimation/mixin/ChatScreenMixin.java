@@ -2,8 +2,8 @@ package com.mcreater.canimation.mixin;
 
 import com.mcreater.canimation.client.CAnimationClient;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.CommandSuggestor;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,13 +21,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ChatScreenMixin extends Screen {
     private int tempY = -1;
     @Shadow protected TextFieldWidget chatField;
-    @Shadow CommandSuggestor commandSuggestor;
+    @Shadow ChatInputSuggestor chatInputSuggestor;
     protected ChatScreenMixin(Text title) {
         super(title);
     }
     @Inject(at = @At("RETURN"), method = "keyPressed")
     private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        if (this.commandSuggestor.keyPressed(keyCode, scanCode, modifiers)) {}
+        if (this.chatInputSuggestor.keyPressed(keyCode, scanCode, modifiers)) {}
         else if (super.keyPressed(keyCode, scanCode, modifiers)) {}
         else if (keyCode == 256) {}
         else if (keyCode != 257 && keyCode != 335) {}
@@ -55,8 +55,8 @@ public abstract class ChatScreenMixin extends Screen {
         this.chatField.setTextFieldFocused(true);
         fill(matrices, 2, tempY - 2, this.width - 2, tempY + 10, MinecraftClient.getInstance().options.getTextBackgroundColor(Integer.MIN_VALUE));
         this.chatField.render(matrices, mouseX, mouseY, delta);
-        this.commandSuggestor.render(matrices, mouseX, mouseY);
-        Style style = MinecraftClient.getInstance().inGameHud.getChatHud().getText(mouseX, mouseY);
+        this.chatInputSuggestor.render(matrices, mouseX, mouseY);
+        Style style = MinecraftClient.getInstance().inGameHud.getChatHud().getTextStyleAt(mouseX, mouseY);
         if (style != null && style.getHoverEvent() != null) {
             this.renderTextHoverEffect(matrices, style, mouseX, mouseY);
         }
