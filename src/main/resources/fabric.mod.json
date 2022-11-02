@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "canimation",
-  "version": "1.0.5",
+  "version": "1.1",
   "name": "Chat Screen Animation",
   "description": "A mod adds animations to chat screen.",
   "authors": ["Jack253-png"],
@@ -12,7 +12,7 @@
   },
   "license": "MIT",
   "icon": "assets/canimation/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
       "com.mcreater.canimation.client.CAnimationClient"

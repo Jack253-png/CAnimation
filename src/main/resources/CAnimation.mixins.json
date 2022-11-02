@@ -16,5 +16,12 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+
+  ],
+  "server": [
+    "DedicatedServerGuiMixin",
+    "PlayerStatsGuiMixin"
+  ]
 }
