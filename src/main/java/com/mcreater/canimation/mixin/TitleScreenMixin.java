@@ -13,5 +13,6 @@ public abstract class TitleScreenMixin {
     @Inject(at = @At("HEAD"), method = "render")
     private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         ChatLogUtils.debugShowed = false;
+        ChatLogUtils.updateShowed = false;
     }
 }

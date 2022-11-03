@@ -1,6 +1,7 @@
 package com.mcreater.canimation.mixin;
 
 import com.mcreater.canimation.client.CAnimationClient;
+import com.mcreater.canimation.utils.ChatLogUtils;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -51,6 +52,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
      */
     @Overwrite
     public void render(MatrixStack matrices, int currentTick) {
+        ChatLogUtils.printDebugLog();
         if (!this.isChatHidden()) {
             int i = this.getVisibleLineCount();
             int j = this.visibleMessages.size();
