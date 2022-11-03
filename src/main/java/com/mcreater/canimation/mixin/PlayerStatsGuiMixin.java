@@ -30,9 +30,6 @@ public abstract class PlayerStatsGuiMixin extends JComponent {
      */
     @Overwrite
     public void paint(Graphics graphics) {
-        graphics.setColor(getIsDark() ? new Color(60, 63, 65) : getIsFlatLaf() ? new Color(242, 242, 242) : Color.WHITE);
-        graphics.fillRect(0, 0, 456, 246);
-
         int i;
         for(i = 0; i < 256; ++i) {
             int j = this.memoryUsePercentage[i + this.memoryUsePercentagePos & 255];

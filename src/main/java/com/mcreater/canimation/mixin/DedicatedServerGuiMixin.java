@@ -3,9 +3,8 @@ package com.mcreater.canimation.mixin;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.FlatPropertiesLaf;
-import com.formdev.flatlaf.util.SystemInfo;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.gui.DedicatedServerGui;
 import org.spongepowered.asm.mixin.Final;
@@ -21,11 +20,9 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.Vector;
 
 @Mixin(value = DedicatedServerGui.class, priority = 2147483647)
 public abstract class DedicatedServerGuiMixin {
@@ -40,11 +37,51 @@ public abstract class DedicatedServerGuiMixin {
                 UIManager.put(o, resource);
             }
         });
-        System.setProperty("os.version", "10.0");
+    }
+    private static boolean getIsDark() {
+        return UIManager.getLookAndFeel() instanceof FlatDarkLaf ||
+                UIManager.getLookAndFeel() instanceof FlatDarculaLaf;
+    }
+    private static boolean getIsFlatLaf() {
+        return UIManager.getLookAndFeel() instanceof FlatLaf;
+    }
+    private static Vector<Component> getComponents(Component rootPane) {
+        Vector<Component> com = new Vector<>();
+        if (rootPane instanceof Container) {
+            Arrays.asList(((Container) rootPane).getComponents()).forEach(component -> {
+                com.add(component);
+                if (component instanceof Container) {
+                    com.addAll(getComponents(component));
+                }
+            });
+        }
+        else {
+            com.add(rootPane);
+        }
+        return com;
+    }
+    private static void setTheme(Frame frame, UIManager.LookAndFeelInfo info) {
+        try {
+            UIManager.setLookAndFeel(info.getClassName());
+            SwingUtilities.updateComponentTreeUI(frame);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        getComponents(frame).forEach(c -> c.setBackground(getIsDark() ? new Color(60, 63, 65) : getIsFlatLaf() ? new Color(242, 242, 242) : Color.WHITE));
+    }
+    private static void setTheme(Frame frame, LookAndFeel info) {
+        try {
+            UIManager.setLookAndFeel(info);
+            SwingUtilities.updateComponentTreeUI(frame);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        getComponents(frame).forEach(c -> c.setBackground(getIsDark() ? new Color(60, 63, 65) : getIsFlatLaf() ? new Color(242, 242, 242) : Color.WHITE));
     }
     @Inject(at = @At("RETURN"), method = "create")
-    private static void create(MinecraftDedicatedServer server, CallbackInfoReturnable<DedicatedServerGui> cir) throws Exception {
-        UIManager.setLookAndFeel(new FlatIntelliJLaf());
+    private static void create(MinecraftDedicatedServer server, CallbackInfoReturnable<DedicatedServerGui> cir) {
         FlatIntelliJLaf.installLafInfo();
         FlatLightLaf.installLafInfo();
         FlatDarculaLaf.installLafInfo();
@@ -53,6 +90,8 @@ public abstract class DedicatedServerGuiMixin {
         new Thread(() -> {
             do {
                 Arrays.asList(JFrame.getFrames()).forEach(frame -> {
+                    setTheme(frame, new FlatIntelliJLaf());
+
                     JMenuBar bar = new JMenuBar();
 
                     JMenu menu = new JMenu("Theme");
@@ -62,18 +101,14 @@ public abstract class DedicatedServerGuiMixin {
                             item = new JMenuItem("");
                             item.setAction(new AbstractAction(info.getName()) {
                                 public void actionPerformed(ActionEvent e) {
-                                    try {
-                                        UIManager.setLookAndFeel(info.getClassName());
-                                        SwingUtilities.updateComponentTreeUI(frame);
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
+                                    setTheme(frame, info);
                                 }
                             });
                             menu.add(item);
                         }
                     }
                     bar.add(menu);
+
                     try {
                         ((JFrame) frame).setJMenuBar(bar);
                     } catch (Exception e) {
