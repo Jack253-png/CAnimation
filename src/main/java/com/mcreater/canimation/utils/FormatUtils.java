@@ -12,6 +12,9 @@ public final class FormatUtils {
     public static BaseText format(String resKey) {
         return new TranslatableText("ui.log.base", Language.getInstance().get(resKey));
     }
+    public static BaseText format(String resKey, Object... args) {
+        return new TranslatableText("ui.log.base", Language.getInstance().get(resKey), args);
+    }
     public static File getDir(File src1) {
         String src = src1.getAbsolutePath();
         src = src.replace("\\", "/");

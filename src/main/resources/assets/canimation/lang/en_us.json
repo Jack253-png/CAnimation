@@ -13,5 +13,6 @@
   "ui.config.am.item.4": "Enable Player List Screen Animation",
   "ui.config.am.item.5": "Enable Boss Bar Animation",
   "ui.config.pl.title": "Player List Config",
-  "ui.config.pl.item.1": "Enable Player List Background"
+  "ui.config.pl.item.1": "Enable Player List Background",
+  "ui.update": "New version of CAnimation available, you can download it on https://modrinth.com/mod/canimation"
 }

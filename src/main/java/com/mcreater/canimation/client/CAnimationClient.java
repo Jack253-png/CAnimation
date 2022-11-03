@@ -1,11 +1,12 @@
 package com.mcreater.canimation.client;
 
+import com.google.gson.Gson;
 import com.mcreater.canimation.config.CommonConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.loader.FabricLoader;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.BossBarHud;
@@ -17,11 +18,17 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Vector;
+import java.util.function.Consumer;
 
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
@@ -107,4 +114,6 @@ public class CAnimationClient implements ClientModInitializer {
             e.printStackTrace();
         }
     }
+
+
 }
