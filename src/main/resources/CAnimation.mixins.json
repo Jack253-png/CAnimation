@@ -14,6 +14,10 @@
     "SubtitlesHudMixin",
     "TitleScreenMixin"
   ],
+  "server": [
+    "DedicatedServerGuiMixin",
+    "PlayerStatsGuiMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
