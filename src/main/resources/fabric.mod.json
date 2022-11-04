@@ -38,6 +38,9 @@
   "jars": [
     {
       "file": "libs/cloth-config-8.1.77-fabric.jar"
+    },
+    {
+      "file": "libs/flatlaf-2.5.jar"
     }
   ]
 }
