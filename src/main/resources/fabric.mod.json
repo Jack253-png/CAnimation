@@ -32,12 +32,14 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.7",
-    "fabric": "*",
     "minecraft": "1.18.x"
   },
   "jars": [
     {
       "file": "libs/cloth-config-6.4.90-fabric.jar"
+    },
+    {
+      "file": "libs/flatlaf-2.5.jar"
     }
   ]
 }
