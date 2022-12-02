@@ -42,7 +42,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow protected abstract boolean isChatFocused();
     @Shadow public abstract double getChatScale();
     @Shadow public abstract int getWidth();
-
+    private boolean flag = false;
     private static double getMessageOpacityMultiplier(int age) {
         double d = (double)age / 200.0;
         d = 1.0 - d;
@@ -58,7 +58,10 @@ public abstract class ChatHudMixin extends DrawableHelper {
      */
     @Overwrite
     public void render(MatrixStack matrices, int tickDelta) {
-        ChatLogUtils.printDebugLog();
+        if (!flag) {
+            flag = true;
+            new Thread(ChatLogUtils::printDebugLog).start();
+        }
         if (!this.isChatHidden()) {
             this.processMessageQueue();
             int i = this.getVisibleLineCount();

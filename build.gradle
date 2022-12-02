@@ -29,6 +29,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "com.terraformersmc:modmenu:3.2.2"
+    modImplementation files("physics-mod-2.7.3-mc-1.18.2-fabric.jar")
 //    implementation("net.minecraft:launchwrapper:1.12")
 
     // Easy config screen setup library

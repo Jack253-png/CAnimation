@@ -42,6 +42,7 @@ public class CAnimation implements ModInitializer {
         }
         catch (Exception ignored) {}
         if (currentMcVer != null && currentModVer != null) {
+            System.out.println("[CAnimation] Checking update!");
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestProperty("User-Agent", "Chat screen animation");
             connection.connect();
