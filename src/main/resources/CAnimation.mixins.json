@@ -11,8 +11,7 @@
     "CommandSuggesterMixin$SuggestionWindowMixin",
     "InGameHudMixin",
     "PlayerListHudMixin",
-    "SubtitlesHudMixin",
-    "TitleScreenMixin"
+    "SubtitlesHudMixin"
   ],
   "server": [
     "DedicatedServerGuiMixin",

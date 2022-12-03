@@ -38,6 +38,7 @@ public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow protected abstract void drawIndicatorIcon(MatrixStack matrices, int x, int y, MessageIndicator.Icon icon);
     private final double[] frictions = FrictionsGenerator.generate1(1000);
     private final Map<ChatHudLine.Visible, Integer> cachedMap = new HashMap<>();
+    private boolean flag = false;
     private static double getMessageOpacityMultiplier(int age) {
         double d = (double)age / 200.0;
         d = 1.0 - d;
@@ -52,7 +53,10 @@ public abstract class ChatHudMixin extends DrawableHelper {
      */
     @Overwrite
     public void render(MatrixStack matrices, int currentTick) {
-        ChatLogUtils.printDebugLog();
+        if (!flag) {
+            flag = true;
+            ChatLogUtils.printDebugLog();
+        }
         if (!this.isChatHidden()) {
             int i = this.getVisibleLineCount();
             int j = this.visibleMessages.size();
