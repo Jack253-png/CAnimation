@@ -36,6 +36,9 @@ public abstract class ChatHudMixin extends DrawableHelper {
     @Shadow protected abstract int getLineHeight();
     @Shadow protected abstract int getIndicatorX(ChatHudLine.Visible line);
     @Shadow protected abstract void drawIndicatorIcon(MatrixStack matrices, int x, int y, MessageIndicator.Icon icon);
+    @Shadow protected abstract int getMessageIndex(double chatLineX, double chatLineY);
+    @Shadow protected abstract double toChatLineX(double x);
+    @Shadow protected abstract double toChatLineY(double y);
     private final double[] frictions = FrictionsGenerator.generate1(1000);
     private final Map<ChatHudLine.Visible, Integer> cachedMap = new HashMap<>();
     private boolean flag = false;
@@ -52,11 +55,12 @@ public abstract class ChatHudMixin extends DrawableHelper {
      * @reason overwrite for animations
      */
     @Overwrite
-    public void render(MatrixStack matrices, int currentTick) {
+    public void render(MatrixStack matrices, int currentTick, int mouseX, int mouseY) {
         if (!flag) {
             flag = true;
             ChatLogUtils.printDebugLog();
         }
+
         if (!this.isChatHidden()) {
             int i = this.getVisibleLineCount();
             int j = this.visibleMessages.size();
@@ -64,88 +68,90 @@ public abstract class ChatHudMixin extends DrawableHelper {
                 boolean bl = this.isChatFocused();
                 float f = (float)this.getChatScale();
                 int k = MathHelper.ceil((float)this.getWidth() / f);
+                int l = this.client.getWindow().getScaledHeight();
                 matrices.push();
-                matrices.translate(4.0, 8.0, 0.0);
                 matrices.scale(f, f, 1.0F);
+                matrices.translate(4.0F, 0.0F, 0.0F);
+                int m = MathHelper.floor((float)(l - 40) / f);
+                int n = this.getMessageIndex(this.toChatLineX(mouseX), this.toChatLineY(mouseY));
                 double d = this.client.options.getChatOpacity().getValue() * 0.8999999761581421 + 0.10000000149011612;
                 double e = this.client.options.getTextBackgroundOpacity().getValue();
                 double g = this.client.options.getChatLineSpacing().getValue();
-                int l = this.getLineHeight();
-                double h = -8.0 * (g + 1.0) + 4.0 * g;
-                int m = 0;
+                int o = this.getLineHeight();
+                int p = (int)Math.round(-8.0 * (g + 1.0) + 4.0 * g);
+                int q = 0;
 
-                int o;
-                int q;
-                int r;
                 int t;
                 int u;
-                for(int n = 0; n + this.scrolledLines < this.visibleMessages.size() && n < i; ++n) {
-                    ChatHudLine.Visible visible = this.visibleMessages.get(n + this.scrolledLines);
+                int v;
+                int x;
+                for(int r = 0; r + this.scrolledLines < this.visibleMessages.size() && r < i; ++r) {
+                    int s = r + this.scrolledLines;
+                    ChatHudLine.Visible visible = this.visibleMessages.get(s);
                     if (visible != null) {
-                        o = currentTick - visible.addedTime();
-                        if (o < 200 || bl) {
-                            double p = bl ? 1.0 : getMessageOpacityMultiplier(o);
-                            q = (int)(255.0 * p * d);
-                            r = (int)(255.0 * p * e);
-                            ++m;
-                            if (q > 3) {
+                        t = currentTick - visible.addedTime();
+                        if (t < 200 || bl) {
+                            double h = bl ? 1.0 : getMessageOpacityMultiplier(t);
+                            u = (int)(255.0 * h * d);
+                            v = (int)(255.0 * h * e);
+                            ++q;
+                            if (u > 3) {
                                 if (!cachedMap.containsKey(visible)) {
                                     cachedMap.put(visible, CAnimationClient.config.model.animationControl.chatHUD ? 0 : frictions.length - 1);
                                 }
                                 int Ind = cachedMap.get(visible);
-
                                 int offset = (int) (this.getWidth() * frictions[Ind]);
 
-                                t = -n * l;
-                                u = (int) ((double) t + h);
-
-                                int finalT = t;
                                 int finalR = r;
+                                int finalV = v;
                                 int finalU = u;
-                                int finalQ = q;
                                 Runnable r2 = () -> {
-                                    int off = 0;
+                                    int x2 = m - finalR * o;
+                                    int y = x2 + p;
                                     matrices.push();
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    fill(matrices, -4 - off, finalT - l, k + 4 + 4 - off, finalT, finalR << 24);
+                                    matrices.translate(0.0F, 0.0F, 50.0F);
+                                    fill(matrices, -4, x2 - o, k + 4 + 4, x2, finalV << 24);
                                     MessageIndicator messageIndicator = visible.indicator();
                                     if (messageIndicator != null) {
-                                        int v = messageIndicator.indicatorColor() | finalQ << 24;
-                                        fill(matrices, -4 - off, finalT - l, -2 - off, finalT, v);
-                                        if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
-                                            int w = this.getIndicatorX(visible);
+                                        int z = messageIndicator.indicatorColor() | finalU << 24;
+                                        fill(matrices, -4, x2 - o, -2, x2, z);
+                                        if (s == n && messageIndicator.icon() != null) {
+                                            int aa = this.getIndicatorX(visible);
                                             Objects.requireNonNull(this.client.textRenderer);
-                                            int x = finalU + 9;
-                                            this.drawIndicatorIcon(matrices, w - off, x, messageIndicator.icon());
+                                            int ab = y + 9;
+                                            this.drawIndicatorIcon(matrices, aa, ab, messageIndicator.icon());
                                         }
                                     }
 
                                     RenderSystem.enableBlend();
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), (float) 0 - off, (float) finalU, 16777215 + (finalQ << 24));
+                                    matrices.translate(0.0F, 0.0F, 50.0F);
+                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), 0.0F, (float)y, 16777215 + (finalU << 24));
                                     RenderSystem.disableBlend();
                                     matrices.pop();
                                 };
 
+
                                 if (MinecraftClient.getInstance().currentScreen == null || cachedMap.get(visible) != frictions.length - 1) {
+                                    x = m - r * o;
+                                    int y = x + p;
                                     matrices.push();
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    fill(matrices, -4 - offset, t - l, k + 4 + 4 - offset, t, r << 24);
+                                    matrices.translate(0.0F, 0.0F, 50.0F);
+                                    fill(matrices, -4 - offset, x - o, k + 4 + 4 - offset, x, v << 24);
                                     MessageIndicator messageIndicator = visible.indicator();
                                     if (messageIndicator != null) {
-                                        int v = messageIndicator.indicatorColor() | q << 24;
-                                        fill(matrices, -4 - offset, t - l, -2 - offset, t, v);
-                                        if (bl && visible.endOfEntry() && messageIndicator.icon() != null) {
-                                            int w = this.getIndicatorX(visible);
+                                        int z = messageIndicator.indicatorColor() | u << 24;
+                                        fill(matrices, -4 - offset, x - o, -2 - offset, x, z);
+                                        if (s == n && messageIndicator.icon() != null) {
+                                            int aa = this.getIndicatorX(visible);
                                             Objects.requireNonNull(this.client.textRenderer);
-                                            int x = u + 9;
-                                            this.drawIndicatorIcon(matrices, w - offset, x, messageIndicator.icon());
+                                            int ab = y + 9;
+                                            this.drawIndicatorIcon(matrices, aa - offset, ab, messageIndicator.icon());
                                         }
                                     }
 
                                     RenderSystem.enableBlend();
-                                    matrices.translate(0.0, 0.0, 50.0);
-                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), (float) 0 - offset, (float) u, 16777215 + (q << 24));
+                                    matrices.translate(0.0F, 0.0F, 50.0F);
+                                    this.client.textRenderer.drawWithShadow(matrices, visible.content(), 0.0F - offset, (float) y, 16777215 + (u << 24));
                                     RenderSystem.disableBlend();
                                     matrices.pop();
 
@@ -167,33 +173,33 @@ public abstract class ChatHudMixin extends DrawableHelper {
                     }
                 }
 
-                long y = this.client.getMessageHandler().getUnprocessedMessageCount();
-                int z;
-                if (y > 0L) {
-                    o = (int)(128.0 * d);
-                    z = (int)(255.0 * e);
+                long ac = this.client.getMessageHandler().getUnprocessedMessageCount();
+                int ad;
+                if (ac > 0L) {
+                    ad = (int)(128.0 * d);
+                    t = (int)(255.0 * e);
                     matrices.push();
-                    matrices.translate(0.0, 0.0, 50.0);
-                    fill(matrices, -2, 0, k + 4, 9, z << 24);
+                    matrices.translate(0.0F, (float)m, 50.0F);
+                    fill(matrices, -2, 0, k + 4, 9, t << 24);
                     RenderSystem.enableBlend();
-                    matrices.translate(0.0, 0.0, 50.0);
-                    this.client.textRenderer.drawWithShadow(matrices, Text.translatable("chat.queue", y), 0.0F, 1.0F, 16777215 + (o << 24));
+                    matrices.translate(0.0F, 0.0F, 50.0F);
+                    this.client.textRenderer.drawWithShadow(matrices, Text.translatable("chat.queue", ac), 0.0F, 1.0F, 16777215 + (ad << 24));
                     matrices.pop();
                     RenderSystem.disableBlend();
                 }
 
                 if (bl) {
-                    o = this.getLineHeight();
-                    z = j * o;
-                    int aa = m * o;
-                    q = this.scrolledLines * aa / j;
-                    r = aa * aa / z;
-                    if (z != aa) {
-                        int s = q > 0 ? 170 : 96;
-                        t = this.hasUnreadNewMessages ? 13382451 : 3355562;
-                        u = k + 4;
-                        fill(matrices, u, -q, u + 2, -q - r, t + (s << 24));
-                        fill(matrices, u + 2, -q, u + 1, -q - r, 13421772 + (s << 24));
+                    ad = this.getLineHeight();
+                    t = j * ad;
+                    int ae = q * ad;
+                    int af = this.scrolledLines * ae / j - m;
+                    u = ae * ae / t;
+                    if (t != ae) {
+                        v = af > 0 ? 170 : 96;
+                        int w = this.hasUnreadNewMessages ? 13382451 : 3355562;
+                        x = k + 4;
+                        fill(matrices, x, -af, x + 2, -af - u, w + (v << 24));
+                        fill(matrices, x + 2, -af, x + 1, -af - u, 13421772 + (v << 24));
                     }
                 }
 

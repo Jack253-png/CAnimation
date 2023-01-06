@@ -49,7 +49,7 @@ public abstract class ChatScreenMixin extends Screen {
         if (tempY == -1) tempY = height + 1;
         if (tempY > height - 12) tempY -= 1;
         if (!CAnimationClient.config.model.animationControl.chatScreen) tempY = height - 12;
-        chatField.y = tempY;
+        chatField.setY(tempY);
 
         this.setFocused(this.chatField);
         this.chatField.setTextFieldFocused(true);

@@ -27,7 +27,8 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "com.terraformersmc:modmenu:4.0.6"
+    modImplementation "com.terraformersmc:modmenu:5.0.2"
+
 //    implementation("net.minecraft:launchwrapper:1.12")
 
     // Easy config screen setup library

@@ -1,6 +1,5 @@
 package com.mcreater.canimation.mixin;
 
-import com.google.common.collect.Ordering;
 import com.mcreater.canimation.client.CAnimationClient;
 import com.mcreater.canimation.utils.FrictionsGenerator;
 import com.mojang.authlib.GameProfile;
@@ -8,7 +7,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.hud.PlayerListHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
@@ -22,50 +20,41 @@ import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Mixin(value = PlayerListHud.class, priority = 2147483647)
 public abstract class PlayerListHudMixin extends DrawableHelper {
-    @Shadow @Final private static Ordering<PlayerListEntry> ENTRY_ORDERING;
+    @Shadow @Final private static Comparator<PlayerListEntry> ENTRY_ORDERING;
     @Shadow @Final private MinecraftClient client;
-    @Shadow @Final private InGameHud inGameHud;
     @Shadow @Nullable private Text footer;
     @Shadow @Nullable private Text header;
-    @Shadow private long showTime;
-    @Shadow private boolean visible;
 
     @Shadow public abstract Text getPlayerName(PlayerListEntry entry);
-    @Shadow protected abstract void renderScoreboardObjective(ScoreboardObjective objective, int y, String player, int startX, int endX, PlayerListEntry entry, MatrixStack matrices);
+    @Shadow protected abstract void renderScoreboardObjective(ScoreboardObjective objective, int y, String player, int left, int right, UUID uuid, MatrixStack matrices);
     @Shadow protected abstract void renderLatencyIcon(MatrixStack matrices, int width, int x, int y, PlayerListEntry entry);
     private static final double[] frictions = FrictionsGenerator.generate1(1000);
     private static int index = 0;
     private static boolean isInScreen = true;
-
-    /**
-     * @author Jack253-png
-     * @reason overwrite for outer animations
-     */
-    @Overwrite
-    public void setVisible(boolean visible) {
-        if (visible && !this.visible) {
-            this.showTime = Util.getMeasuringTimeMs();
-        }
-
-        isInScreen = visible;
-        this.visible = visible;
-    }
     private static void fillInternal(MatrixStack matrices, int x1, int y1, int x2, int y2, int color) {
         if (CAnimationClient.config.model.playerList.background) fill(matrices, x1, y1, x2, y2, color);
+    }
+    @Inject(at = @At("RETURN"), method = "setVisible")
+    private void setVisible(boolean visible, CallbackInfo ci) {
+        isInScreen = visible;
     }
     /**
      * @author Jack253-png
@@ -76,7 +65,7 @@ public abstract class PlayerListHudMixin extends DrawableHelper {
         int offset = (int) (MinecraftClient.getInstance().getWindow().getHeight() * frictions[CAnimationClient.config.model.animationControl.playerList ? index : frictions.length - 1]);
 
         ClientPlayNetworkHandler clientPlayNetworkHandler = this.client.player.networkHandler;
-        List<PlayerListEntry> list = ENTRY_ORDERING.sortedCopy(clientPlayNetworkHandler.getPlayerList());
+        List<PlayerListEntry> list = clientPlayNetworkHandler.getListedPlayerListEntries().stream().sorted(ENTRY_ORDERING).limit(80L).toList();
         int i = 0;
         int j = 0;
         Iterator<PlayerListEntry> var9 = list.iterator();
@@ -199,7 +188,7 @@ public abstract class PlayerListHudMixin extends DrawableHelper {
                     int ac = w + i + 1;
                     int ad = ac + n;
                     if (ad - ac > 5) {
-                        this.renderScoreboardObjective(objective, x - offset, gameProfile.getName(), ac, ad, playerListEntry2, matrices);
+                        this.renderScoreboardObjective(objective, x - offset, gameProfile.getName(), ac, ad, gameProfile.getId(), matrices);
                     }
                 }
 
