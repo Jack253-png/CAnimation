@@ -13,10 +13,6 @@
     "PlayerListHudMixin",
     "SubtitlesHudMixin"
   ],
-  "server": [
-    "DedicatedServerGuiMixin",
-    "PlayerStatsGuiMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

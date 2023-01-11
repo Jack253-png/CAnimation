@@ -12,13 +12,10 @@
   },
   "license": "MIT",
   "icon": "assets/canimation/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "com.mcreater.canimation.client.CAnimationClient"
-    ],
-    "server": [
-      "com.mcreater.canimation.server.CAnimationServer"
     ],
     "main": [
       "com.mcreater.canimation.CAnimation"
