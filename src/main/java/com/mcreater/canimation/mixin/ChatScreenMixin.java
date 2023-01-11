@@ -1,6 +1,7 @@
 package com.mcreater.canimation.mixin;
 
 import com.mcreater.canimation.client.CAnimationClient;
+import com.mcreater.canimation.utils.ChatLogUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.ChatScreen;
