@@ -12,19 +12,21 @@ import java.util.Objects;
 public class ChatLogUtils {
     public static final StackWalker walker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
     public static void printDebugLog() {
-        Text t = FormatUtils.format("ui.debug");
-        if (FabricLoaderImpl.INSTANCE.isDevelopmentEnvironment())
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(t);
+        new Thread(() -> {
+            Text t = FormatUtils.format("ui.debug");
+            if (FabricLoaderImpl.INSTANCE.isDevelopmentEnvironment())
+                MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(t);
 
-        try {
-            if (!Objects.equals(CAnimation.checkUpdate(), CAnimation.getCurrentModVer())) {
-                Text t2 = FormatUtils.format("ui.update");
-                MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(t2);
+            try {
+                if (!Objects.equals(CAnimation.checkUpdate(), CAnimation.getCurrentModVer())) {
+                    Text t2 = FormatUtils.format("ui.update");
+                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(t2);
+                }
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
     public static Logger getLogger() {
         return LogManager.getLogger(walker.getCallerClass());
