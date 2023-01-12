@@ -14,9 +14,6 @@
   "icon": "assets/canimation/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "com.mcreater.canimation.client.CAnimationClient"
-    ],
     "main": [
       "com.mcreater.canimation.CAnimation"
     ],
