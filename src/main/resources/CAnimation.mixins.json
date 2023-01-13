@@ -11,10 +11,11 @@
     "CommandSuggesterMixin$SuggestionWindowMixin",
     "InGameHudMixin",
     "PlayerListHudMixin",
-    "SubtitlesHudMixin",
-    "TitleScreenMixin"
+    "SubtitlesHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

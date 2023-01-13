@@ -100,6 +100,7 @@ public final class ClothConfigScreenFactory {
                         .setDefaultValue(CommonConfig.PlayerListConfigModel.DEFAULT_background)
                         .build()
                 );
+
         return builder.setParentScreen(parent).setTransparentBackground(true).build();
     }
 }
